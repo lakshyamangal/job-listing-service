@@ -26,12 +26,9 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
     });
 
-    const userResponse = userData.save();
-    // you could write userResponse directly as well there is no problem in that. //
-    const token = await jwt.sign(
-      { userID: userResponse._id },
-      process.env.JWT_SECRET
-    );
+    const userResponse = await userData.save();
+    const id = userResponse._id;
+    const token = await jwt.sign({ userId: id }, process.env.JWT_SECRET);
     res.json({
       message: "User regitered Successfully",
       token: token,
@@ -40,6 +37,32 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     res.json(error);
   }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ message: "Bad request" });
+
+    const userDetails = await User.findOne({ email });
+    if (!userDetails)
+      return res.status(401).json({ message: "Invalid Credentials" });
+
+    const passwordMatch = await bcrypt.compare(password, userDetails.password);
+    if (!passwordMatch)
+      return res.status(401).json({ message: "Invalid Credentials" });
+
+    const token = await jwt.sign(
+      { userId: userDetails._id },
+      process.env.JWT_SECRET
+    );
+    res.json({
+      message: "User logged in successfully",
+      token: token,
+      name: userDetails.name,
+    });
+  } catch (err) {}
 });
 
 module.exports = router;
