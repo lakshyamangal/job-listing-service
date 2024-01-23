@@ -2,7 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 8000;
+const authRouter = require("./routes/auth");
 require("dotenv").config();
+app.use(express.json());
 
 mongoose
   .connect(process.env.MONGODB_URL)
@@ -12,7 +14,7 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
+app.use("/api/auth", authRouter);
 app.get("/health", (req, res) => {
   res.json({
     service: "job listing service",
