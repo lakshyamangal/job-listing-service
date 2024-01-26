@@ -23,4 +23,63 @@ router.post("/create", verifyJwt, async (req, res) => {
   }
 });
 
+router.put("/edit/:jobId", verifyJwt, async (req, res) => {
+  try {
+    const { companyName, logoUrl, title, description } = req.body;
+    const jobId = req.params.jobId;
+    if (!companyName || !logoUrl || !title || !description)
+      return res.status(400).json({ message: "Bad Request" });
+
+    const jobUpdate = await Job.updateOne(
+      { _id: jobId },
+      {
+        $set: {
+          companyName,
+          logoUrl,
+          title,
+          description,
+        },
+      }
+    );
+    if (!jobUpdate.matchedCount) res.json({ message: "no Matched entry" });
+    else res.json({ message: "Job details updataed successfully" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/job-description/:jobId", async (req, res) => {
+  try {
+    const jobId = req.params.jobId;
+    const jobDetails = await Job.findById(jobId);
+    res.json({ data: jobDetails });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/all", async (req, res) => {
+  try {
+    // the presence of the double quotes here allows every entry to display if one has not given a title //
+    const title = req.query.title || "";
+    const jobList = await Job.find(
+      { title: { $regex: title, $options: "i" } },
+      { companyName: 1 }
+    );
+    res.json({ data: jobList });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.delete("/delete/:jobId", verifyJwt, async (req, res) => {
+  try {
+    const jobId = req.params.jobId;
+    await Job.findByIdAndDelete(jobId);
+    res.status(200).json({ message: "Job Deleted" });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;

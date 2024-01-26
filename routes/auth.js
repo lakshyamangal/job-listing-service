@@ -6,6 +6,7 @@ const User = require("../models/User");
 
 router.post("/register", async (req, res) => {
   try {
+    // This is we doing validataion of the request that has come. you can use yup , joi, regex for validation too. //
     const { name, email, mobile, password } = req.body;
     if (!name || !email || !mobile || !password)
       return res.json({ message: "Bad request" });
@@ -62,7 +63,9 @@ router.post("/login", async (req, res) => {
       token: token,
       name: userDetails.name,
     });
-  } catch (err) {}
+  } catch (err) {
+    res.json(err);
+  }
 });
 
 module.exports = router;
