@@ -62,10 +62,14 @@ router.get("/all", async (req, res) => {
   try {
     // the presence of the double quotes here allows every entry to display if one has not given a title //
     const title = req.query.title || "";
-    const jobList = await Job.find(
-      { title: { $regex: title, $options: "i" } },
-      { companyName: 1 }
-    );
+    const skills = req.query.skills;
+    let filterSkills = skills?.split(",");
+    let filter = {};
+    if (filterSkills) filter = { skills: { $in: [...filterSkills] } };
+    const jobList = await Job.find({
+      title: { $regex: title, $options: "i" },
+      ...filter,
+    });
     res.json({ data: jobList });
   } catch (error) {
     console.log(error);
