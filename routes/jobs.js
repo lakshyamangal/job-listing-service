@@ -5,15 +5,46 @@ const verifyJwt = require("../middlewares/authMiddleware");
 
 router.post("/create", verifyJwt, async (req, res) => {
   try {
-    const { companyName, logoUrl, title, description } = req.body;
-    if (!companyName || !logoUrl || !title || !description)
+    const {
+      companyName,
+      logoUrl,
+      title,
+      salary,
+      type,
+      place,
+      location,
+      description,
+      about,
+      skills,
+      info,
+    } = req.body;
+    if (
+      !companyName ||
+      !logoUrl ||
+      !title ||
+      !salary ||
+      !type ||
+      !place ||
+      !location ||
+      !about ||
+      !info ||
+      !description ||
+      !skills
+    )
       return res.status(400).json({ message: "Bad Request" });
 
     jobDetails = new Job({
       companyName,
       logoUrl,
       title,
+      salary,
+      type,
+      place,
+      location,
       description,
+      about,
+      skills,
+      info,
       refUserId: req.body.userId,
     });
     await jobDetails.save();
@@ -25,10 +56,34 @@ router.post("/create", verifyJwt, async (req, res) => {
 
 router.put("/edit/:jobId", verifyJwt, async (req, res) => {
   try {
-    const { companyName, logoUrl, title, description } = req.body;
-    const jobId = req.params.jobId;
-    if (!companyName || !logoUrl || !title || !description)
+    const {
+      companyName,
+      logoUrl,
+      title,
+      salary,
+      type,
+      place,
+      location,
+      description,
+      about,
+      skills,
+      info,
+    } = req.body;
+    if (
+      !companyName ||
+      !logoUrl ||
+      !title ||
+      !salary ||
+      !type ||
+      !place ||
+      !location ||
+      !about ||
+      !info ||
+      !description ||
+      !skills
+    )
       return res.status(400).json({ message: "Bad Request" });
+    const jobId = req.params.jobId;
 
     const jobUpdate = await Job.updateOne(
       { _id: jobId },
@@ -37,7 +92,14 @@ router.put("/edit/:jobId", verifyJwt, async (req, res) => {
           companyName,
           logoUrl,
           title,
+          salary,
+          type,
+          place,
+          location,
           description,
+          about,
+          skills,
+          info,
         },
       }
     );

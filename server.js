@@ -4,9 +4,10 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const authRoutes = require("./routes/auth");
 const jobRoutes = require("./routes/jobs");
-
+const cors = require("cors");
 require("dotenv").config();
 app.use(express.json());
+app.use(cors());
 
 mongoose
   .connect(process.env.MONGODB_URL)
