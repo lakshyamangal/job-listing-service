@@ -123,16 +123,20 @@ router.get("/job-description/:jobId", async (req, res) => {
 router.get("/all", async (req, res) => {
   try {
     // the presence of the double quotes here allows every entry to display if one has not given a title //
-    const title = req.query.title || "";
-    const skills = req.query.skills;
+    // ** Doubt -->This is when we write "" pehele || is se pehele then it's wrong why?? jab pehele maine new Url waali cheez nahi kari thi//
+    // ** Notes/Doubt --> it checks when "" is first then it checks on the other side of the or operator then wahan par bhi false aayega agar title query hi nahi hain to , then it will consider empty string over undefined but what is the case when title is thee but empty string tab to hona chaiye ??
+    const title = req?.query?.title || "";
+    const skills = req?.query?.skills;
     const filterSkills = skills?.split(",");
+    // console.log("line no 129 /all", filterSkills, title);
     let filter = {};
     if (filterSkills) filter = { skills: { $in: [...filterSkills] } };
     const jobList = await Job.find({
       title: { $regex: title, $options: "i" },
       ...filter,
     });
-    res.json({ data: jobList });
+    console.log(jobList);
+    res.json({ jobList });
   } catch (error) {
     console.log(error);
   }
