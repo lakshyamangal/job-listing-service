@@ -106,7 +106,7 @@ router.put("/edit/:jobId", verifyJwt, async (req, res) => {
     if (!jobUpdate.matchedCount) res.json({ message: "no Matched entry" });
     else res.json({ message: "Job details updataed successfully" });
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
 });
 
@@ -116,7 +116,7 @@ router.get("/job-description/:jobId", async (req, res) => {
     const jobDetails = await Job.findById(jobId);
     res.json({ data: jobDetails });
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
 });
 
@@ -135,10 +135,9 @@ router.get("/all", async (req, res) => {
       title: { $regex: title, $options: "i" },
       ...filter,
     });
-    console.log(jobList);
     res.json({ jobList });
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
 });
 
@@ -148,7 +147,7 @@ router.delete("/delete/:jobId", verifyJwt, async (req, res) => {
     await Job.findByIdAndDelete(jobId);
     res.status(200).json({ message: "Job Deleted" });
   } catch (err) {
-    console.log(err);
+    res.json(err);
   }
 });
 
